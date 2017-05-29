@@ -1,13 +1,8 @@
 require 'tilt/erubis'
 require 'sinatra'
-require 'sinatra/reloader'
+require 'sinatra/reloader' if development?
 
 before do
-  # @contents = File.readlines('data/toc.txt')
-  # @chapters = (1..12).map do |num|
-  #   [num, File.read("data/chp#{num}.txt")]
-  # end.to_h
-
   @contents = File.readlines('data/toc.txt')
   @chapters = @contents.map.with_index(1) do |name, num|
     { name: name, num: num, body: File.readlines("data/chp#{num}.txt", "\n\n") }
@@ -61,12 +56,6 @@ get '/chapters/:number' do
 end
 
 get '/search' do
-  # query = params[:query]
-  # unless query.to_s.strip.empty?
-  #   matches = @chapters.select { |num, body| body =~ /#{query}/i }
-  #   @matches = matching_nums.map { |num| [num, @contents[num - 1]] }
-  # end
-
   @matches = matching_chapters(params[:query])
 
   erb :search
